@@ -42,16 +42,6 @@ namespace YeeOfficeSDK.Tools
            ICredentials credentials = null,
            int timeout = 20)
         {
-            var webRequest = WebRequest.CreateHttp(url);
-            webRequest.Method = method;
-            webRequest.Timeout = timeout * 1000;
-            if (headers != null && headers.Count > 0)
-            {
-                foreach (var header in headers)
-                {
-                    webRequest.Headers.Add(header.Key, header.Value);
-                }
-            }
             if ((string.Compare(method, "GET", true) == 0
                 || string.Compare(method, "DELETE", true) == 0)
                 && !string.IsNullOrEmpty(content))
@@ -78,11 +68,23 @@ namespace YeeOfficeSDK.Tools
                 }
             }
 
+            var webRequest = WebRequest.CreateHttp(url);
+            webRequest.Method = method;
+            webRequest.Timeout = timeout * 1000;
+            if (headers != null && headers.Count > 0)
+            {
+                foreach (var header in headers)
+                {
+                    webRequest.Headers.Add(header.Key, header.Value);
+                }
+            }
+
             webRequest.CookieContainer = new CookieContainer();
 
             webRequest.Credentials = credentials;
             webRequest.ContentType = contentType;
-            if (!string.IsNullOrWhiteSpace(content) && string.Compare(method, "get", true) != 0)
+            if (!string.IsNullOrWhiteSpace(content) && string.Compare(method, "get", true) != 0
+                && string.Compare(method, "DELETE", true) != 0)
             {
                 byte[] buffer = Encoding.UTF8.GetBytes(content);
                 webRequest.ContentLength = buffer.Length;
@@ -226,6 +228,6 @@ namespace YeeOfficeSDK.Tools
 
         }
 
-        
+
     }
 }
